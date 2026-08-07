@@ -1,0 +1,115 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+
+model User {
+  id           Int      @id @default(autoincrement())
+  username     String   @unique @db.VarChar(50)
+  passwordHash String   @db.VarChar(255)
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+
+  announcements Announcement[]
+  events        Event[]
+
+  @@map("users")
+}
+
+model Profile {
+  id          Int      @id @default(autoincrement())
+  sejarah     String?
+  visi        String?
+  misi        String?
+  alamat      String?  @db.VarChar(255)
+  kontakTelp  String?  @db.VarChar(20)
+  kontakEmail String?  @db.VarChar(100)
+  updatedAt   DateTime @updatedAt
+
+  @@map("profiles")
+}
+
+model OrganizationMember {
+  id         Int      @id @default(autoincrement())
+  name       String   @db.VarChar(100)
+  position   String   @db.VarChar(100)
+  photoUrl   String?  @db.VarChar(255)
+  orderIndex Int      @default(0)
+  createdAt  DateTime @default(now())
+
+  @@map("organization_members")
+}
+
+model Announcement {
+  id           Int                  @id @default(autoincrement())
+  title        String               @db.VarChar(150)
+  slug         String               @unique @db.VarChar(180)
+  content      String
+  category     AnnouncementCategory
+  thumbnailUrl String?              @db.VarChar(255)
+  publishedAt  DateTime?
+  createdBy    Int
+  createdAt    DateTime             @default(now())
+  updatedAt    DateTime             @updatedAt
+
+  user User @relation(fields: [createdBy], references: [id])
+
+  @@map("announcements")
+}
+
+model Event {
+  id          Int         @id @default(autoincrement())
+  title       String      @db.VarChar(150)
+  description String?
+  location    String?     @db.VarChar(200)
+  startDate   DateTime
+  endDate     DateTime?
+  status      EventStatus @default(upcoming)
+  createdBy   Int
+  createdAt   DateTime    @default(now())
+
+  user    User      @relation(fields: [createdBy], references: [id])
+  gallery Gallery[]
+
+  @@map("events")
+}
+
+model Gallery {
+  id        Int      @id @default(autoincrement())
+  eventId   Int?
+  imageUrl  String   @db.VarChar(255)
+  caption   String?  @db.VarChar(200)
+  createdAt DateTime @default(now())
+
+  event Event? @relation(fields: [eventId], references: [id])
+
+  @@map("gallery")
+}
+
+model Rt {
+  id           Int      @id @default(autoincrement())
+  number       Int      @unique
+  leaderName   String?  @db.VarChar(100)
+  description  String?
+  achievements String?
+  isFeatured   Boolean  @default(false)
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+
+  @@map("rts")
+}
+
+enum AnnouncementCategory {
+  berita
+  pengumuman
+}
+
+enum EventStatus {
+  upcoming
+  ongoing
+  done
+}

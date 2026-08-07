@@ -1,0 +1,363 @@
+{
+  "openapi": "3.0.0",
+  "info": {
+    "title": "API Web Profil RW 01 Tunjungsekar",
+    "version": "1.0.0",
+    "description": "Dokumentasi REST API backend untuk Web Profil RW 01 Kelurahan Tunjungsekar Kota Malang"
+  },
+  "servers": [
+    {
+      "url": "http://localhost:3000",
+      "description": "Development Server"
+    }
+  ],
+  "components": {
+    "securitySchemes": {
+      "bearerAuth": {
+        "type": "http",
+        "scheme": "bearer",
+        "bearerFormat": "JWT"
+      }
+    }
+  },
+  "paths": {
+    "/health": {
+      "get": {
+        "summary": "Health Check",
+        "responses": {
+          "200": {
+            "description": "Server is healthy"
+          }
+        }
+      }
+    },
+    "/api/v1/auth/login": {
+      "post": {
+        "summary": "Login Admin",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": ["username", "password"],
+                "properties": {
+                  "username": { "type": "string", "example": "admin" },
+                  "password": { "type": "string", "example": "admin123" }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": { "description": "Login berhasil dan mengembalikan token JWT" },
+          "401": { "description": "Kredensial tidak valid" }
+        }
+      }
+    },
+    "/api/v1/auth/me": {
+      "get": {
+        "summary": "Get Profile Admin Saat Ini",
+        "security": [{ "bearerAuth": [] }],
+        "responses": {
+          "200": { "description": "Data user admin" },
+          "401": { "description": "Unauthorized" }
+        }
+      }
+    },
+    "/api/v1/profile": {
+      "get": {
+        "summary": "Get Profil RW 01 (Public)",
+        "responses": {
+          "200": { "description": "Data sejarah, visi, misi, dan kontak RW" }
+        }
+      }
+    },
+    "/api/v1/admin/profile": {
+      "put": {
+        "summary": "Update Profil RW 01 (Admin)",
+        "security": [{ "bearerAuth": [] }],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "sejarah": { "type": "string" },
+                  "visi": { "type": "string" },
+                  "misi": { "type": "string" },
+                  "alamat": { "type": "string" },
+                  "kontakTelp": { "type": "string" },
+                  "kontakEmail": { "type": "string" }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": { "description": "Profil berhasil diperbarui" }
+        }
+      }
+    },
+    "/api/v1/organization-members": {
+      "get": {
+        "summary": "Daftar Pengurus RW (Public)",
+        "responses": {
+          "200": { "description": "List pengurus terurut berdasarkan orderIndex" }
+        }
+      }
+    },
+    "/api/v1/admin/organization-members": {
+      "post": {
+        "summary": "Tambah Pengurus RW (Admin)",
+        "security": [{ "bearerAuth": [] }],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": ["name", "position"],
+                "properties": {
+                  "name": { "type": "string" },
+                  "position": { "type": "string" },
+                  "photoUrl": { "type": "string", "nullable": true },
+                  "orderIndex": { "type": "integer", "default": 0 }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": { "description": "Anggota berhasil ditambahkan" }
+        }
+      }
+    },
+    "/api/v1/admin/organization-members/{id}": {
+      "put": {
+        "summary": "Update Pengurus RW (Admin)",
+        "security": [{ "bearerAuth": [] }],
+        "parameters": [{ "name": "id", "in": "path", "required": true, "schema": { "type": "integer" } }],
+        "responses": { "200": { "description": "Anggota berhasil diperbarui" } }
+      },
+      "delete": {
+        "summary": "Hapus Pengurus RW (Admin)",
+        "security": [{ "bearerAuth": [] }],
+        "parameters": [{ "name": "id", "in": "path", "required": true, "schema": { "type": "integer" } }],
+        "responses": { "200": { "description": "Anggota berhasil dihapus" } }
+      }
+    },
+    "/api/v1/announcements": {
+      "get": {
+        "summary": "Daftar Pengumuman & Berita (Public)",
+        "parameters": [
+          { "name": "page", "in": "query", "schema": { "type": "integer", "default": 1 } },
+          { "name": "limit", "in": "query", "schema": { "type": "integer", "default": 10 } },
+          { "name": "category", "in": "query", "schema": { "type": "string", "enum": ["berita", "pengumuman"] } }
+        ],
+        "responses": { "200": { "description": "List pengumuman terpaginasi" } }
+      }
+    },
+    "/api/v1/announcements/{slug}": {
+      "get": {
+        "summary": "Detail Pengumuman by Slug (Public)",
+        "parameters": [{ "name": "slug", "in": "path", "required": true, "schema": { "type": "string" } }],
+        "responses": { "200": { "description": "Detail pengumuman" }, "404": { "description": "Not Found" } }
+      }
+    },
+    "/api/v1/admin/announcements": {
+      "post": {
+        "summary": "Buat Pengumuman (Admin)",
+        "security": [{ "bearerAuth": [] }],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": ["title", "content", "category"],
+                "properties": {
+                  "title": { "type": "string" },
+                  "content": { "type": "string" },
+                  "category": { "type": "string", "enum": ["berita", "pengumuman"] },
+                  "thumbnailUrl": { "type": "string", "nullable": true }
+                }
+              }
+            }
+          }
+        },
+        "responses": { "201": { "description": "Pengumuman berhasil dibuat" } }
+      }
+    },
+    "/api/v1/admin/announcements/{id}": {
+      "put": {
+        "summary": "Update Pengumuman (Admin)",
+        "security": [{ "bearerAuth": [] }],
+        "parameters": [{ "name": "id", "in": "path", "required": true, "schema": { "type": "integer" } }],
+        "responses": { "200": { "description": "Pengumuman berhasil diperbarui" } }
+      },
+      "delete": {
+        "summary": "Hapus Pengumuman (Admin)",
+        "security": [{ "bearerAuth": [] }],
+        "parameters": [{ "name": "id", "in": "path", "required": true, "schema": { "type": "integer" } }],
+        "responses": { "200": { "description": "Pengumuman berhasil dihapus" } }
+      }
+    },
+    "/api/v1/events": {
+      "get": {
+        "summary": "Daftar Kegiatan/Agenda RW (Public)",
+        "parameters": [
+          { "name": "page", "in": "query", "schema": { "type": "integer", "default": 1 } },
+          { "name": "limit", "in": "query", "schema": { "type": "integer", "default": 10 } },
+          { "name": "status", "in": "query", "schema": { "type": "string", "enum": ["upcoming", "ongoing", "done"] } }
+        ],
+        "responses": { "200": { "description": "List agenda terpaginasi" } }
+      }
+    },
+    "/api/v1/events/{id}": {
+      "get": {
+        "summary": "Detail Kegiatan by ID (Public)",
+        "parameters": [{ "name": "id", "in": "path", "required": true, "schema": { "type": "integer" } }],
+        "responses": { "200": { "description": "Detail agenda kegiatan" } }
+      }
+    },
+    "/api/v1/admin/events": {
+      "post": {
+        "summary": "Buat Kegiatan Baru (Admin)",
+        "security": [{ "bearerAuth": [] }],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": ["title", "startDate"],
+                "properties": {
+                  "title": { "type": "string" },
+                  "description": { "type": "string" },
+                  "location": { "type": "string" },
+                  "startDate": { "type": "string", "format": "date-time" },
+                  "endDate": { "type": "string", "format": "date-time" },
+                  "status": { "type": "string", "enum": ["upcoming", "ongoing", "done"], "default": "upcoming" }
+                }
+              }
+            }
+          }
+        },
+        "responses": { "201": { "description": "Kegiatan berhasil dibuat" } }
+      }
+    },
+    "/api/v1/admin/events/{id}": {
+      "put": {
+        "summary": "Update Kegiatan (Admin)",
+        "security": [{ "bearerAuth": [] }],
+        "parameters": [{ "name": "id", "in": "path", "required": true, "schema": { "type": "integer" } }],
+        "responses": { "200": { "description": "Kegiatan berhasil diperbarui" } }
+      },
+      "delete": {
+        "summary": "Hapus Kegiatan (Admin)",
+        "security": [{ "bearerAuth": [] }],
+        "parameters": [{ "name": "id", "in": "path", "required": true, "schema": { "type": "integer" } }],
+        "responses": { "200": { "description": "Kegiatan berhasil dihapus" } }
+      }
+    },
+    "/api/v1/gallery": {
+      "get": {
+        "summary": "Daftar Foto Galeri (Public)",
+        "parameters": [
+          { "name": "page", "in": "query", "schema": { "type": "integer", "default": 1 } },
+          { "name": "limit", "in": "query", "schema": { "type": "integer", "default": 10 } },
+          { "name": "eventId", "in": "query", "schema": { "type": "integer" } }
+        ],
+        "responses": { "200": { "description": "List foto galeri" } }
+      }
+    },
+    "/api/v1/admin/gallery": {
+      "post": {
+        "summary": "Upload Foto ke Galeri (Admin)",
+        "security": [{ "bearerAuth": [] }],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "multipart/form-data": {
+              "schema": {
+                "type": "object",
+                "required": ["image"],
+                "properties": {
+                  "image": { "type": "string", "format": "binary", "description": "File gambar" },
+                  "caption": { "type": "string" },
+                  "eventId": { "type": "integer" }
+                }
+              }
+            }
+          }
+        },
+        "responses": { "201": { "description": "Foto berhasil di-upload ke Supabase Storage" } }
+      }
+    },
+    "/api/v1/admin/gallery/{id}": {
+      "delete": {
+        "summary": "Hapus Foto Galeri (Admin)",
+        "security": [{ "bearerAuth": [] }],
+        "parameters": [{ "name": "id", "in": "path", "required": true, "schema": { "type": "integer" } }],
+        "responses": { "200": { "description": "Foto berhasil dihapus" } }
+      }
+    },
+    "/api/v1/rts": {
+      "get": {
+        "summary": "Daftar 11 RT (Public)",
+        "parameters": [
+          { "name": "is_featured", "in": "query", "schema": { "type": "boolean" }, "description": "Filter hanya RT berprestasi" }
+        ],
+        "responses": { "200": { "description": "List RT terurut dari RT 01 s.d RT 11" } }
+      }
+    },
+    "/api/v1/rts/{id}": {
+      "get": {
+        "summary": "Detail RT by ID (Public)",
+        "parameters": [{ "name": "id", "in": "path", "required": true, "schema": { "type": "integer" } }],
+        "responses": { "200": { "description": "Detail data RT" }, "404": { "description": "Not Found" } }
+      }
+    },
+    "/api/v1/admin/rts": {
+      "post": {
+        "summary": "Tambah Data RT (Admin)",
+        "security": [{ "bearerAuth": [] }],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": ["number"],
+                "properties": {
+                  "number": { "type": "integer", "example": 1, "description": "Nomor RT (1-11)" },
+                  "leaderName": { "type": "string", "example": "Budi Santoso" },
+                  "description": { "type": "string" },
+                  "achievements": { "type": "string", "example": "Juara 1 Lomba Kebersihan 2025" },
+                  "isFeatured": { "type": "boolean", "default": false }
+                }
+              }
+            }
+          }
+        },
+        "responses": { "201": { "description": "Data RT berhasil ditambahkan" } }
+      }
+    },
+    "/api/v1/admin/rts/{id}": {
+      "put": {
+        "summary": "Update Data RT (Admin)",
+        "security": [{ "bearerAuth": [] }],
+        "parameters": [{ "name": "id", "in": "path", "required": true, "schema": { "type": "integer" } }],
+        "responses": { "200": { "description": "Data RT berhasil diperbarui" } }
+      },
+      "delete": {
+        "summary": "Hapus Data RT (Admin)",
+        "security": [{ "bearerAuth": [] }],
+        "parameters": [{ "name": "id", "in": "path", "required": true, "schema": { "type": "integer" } }],
+        "responses": { "200": { "description": "Data RT berhasil dihapus" } }
+      }
+    }
+  }
+}
