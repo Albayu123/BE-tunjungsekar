@@ -1,6 +1,6 @@
 import { Request, Response } from 'express';
-import { prisma } from '../lib/db.ts';
-import { AppError } from '../lib/app-error.ts';
+import { prisma } from '../lib/db';
+import { AppError } from '../lib/app-error';
 
 export const getRts = async (req: Request, res: Response) => {
   const isFeatured = req.query.is_featured === 'true' ? true : undefined;

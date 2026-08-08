@@ -4,6 +4,8 @@ import cors from 'cors';
 import swaggerUi from 'swagger-ui-express';
 import { readFileSync } from 'fs';
 import { errorHandler } from './middlewares/error.middleware';
+import { authLimiter, apiLimiter } from './middlewares/rate-limit.middleware';
+import { httpCache } from './middlewares/cache.middleware';
 
 const openapiSpec = JSON.parse(
   readFileSync(new URL('./docs/openapi.json', import.meta.url), 'utf-8')
@@ -20,7 +22,20 @@ import { publicRtRouter, adminRtRouter } from './routes/rt.routes';
 
 const app = express();
 
-app.use(cors());
+const allowedOrigins = process.env.FRONTEND_URL
+  ? process.env.FRONTEND_URL.split(',').map((origin) => origin.trim())
+  : ['http://localhost:5173'];
+
+app.use(cors({
+  origin: (origin, callback) => {
+    if (!origin || allowedOrigins.includes(origin)) {
+      callback(null, true);
+    } else {
+      callback(new Error('Blocked by CORS policy'));
+    }
+  },
+  credentials: true,
+}));
 app.use((req, res, next) => {
   console.log(`${req.method} ${req.path}`);
   next();
@@ -38,8 +53,14 @@ app.use('/docs', swaggerUi.serve, swaggerUi.setup(openapiSpec));
 // Base API Path
 const API_BASE = '/api/v1';
 
-// Auth
+// Global API Rate Limiting & Response Caching
+app.use(API_BASE, apiLimiter);
+app.use(API_BASE, httpCache);
+
+// Auth (with brute-force protection rate limiter on login)
+app.use(`${API_BASE}/auth/login`, authLimiter);
 app.use(`${API_BASE}/auth`, authRouter);
+
 
 // Profile
 app.use(`${API_BASE}/profile`, publicProfileRouter);

@@ -7,7 +7,7 @@
 
 import 'dotenv/config';
 import bcrypt from 'bcryptjs';
-import { prisma } from '../src/lib/db.ts';
+import { prisma } from '../src/lib/db';
 
 async function main() {
   console.log('Seeding data resmi Kampung Mbois RW 01 Tunjungsekar...');
