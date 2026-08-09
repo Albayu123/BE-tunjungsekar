@@ -1,6 +1,6 @@
 import { Router } from 'express';
-import { authenticate } from '../middlewares/auth.middleware.ts';
-import { getRts, getRtById, createRt, updateRt, deleteRt } from '../controllers/rt.controller.ts';
+import { authenticate } from '../middlewares/auth.middleware';
+import { getRts, getRtById, createRt, updateRt, deleteRt } from '../controllers/rt.controller';
 
 export const publicRtRouter = Router();
 export const adminRtRouter = Router();

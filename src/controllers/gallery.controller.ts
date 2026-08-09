@@ -32,6 +32,16 @@ export const getGallery = async (req: Request, res: Response) => {
 export const uploadPhoto = async (req: Request, res: Response) => {
   if (!req.file) throw new AppError('File foto diperlukan', 400);
 
+  const allowedMimeTypes = ['image/jpeg', 'image/png', 'image/webp'];
+  if (!allowedMimeTypes.includes(req.file.mimetype)) {
+    throw new AppError('Format file tidak didukung. Hanya JPEG, PNG, dan WebP yang diperbolehkan', 400);
+  }
+
+  const maxFileSize = 5 * 1024 * 1024; // 5 MB
+  if (req.file.size > maxFileSize) {
+    throw new AppError('Ukuran file terlalu besar. Maksimal 5 MB', 400);
+  }
+
   const { caption, eventId } = req.body;
   const parsedEventId = eventId ? parseInt(eventId) : undefined;
 
