@@ -7,8 +7,16 @@
   },
   "servers": [
     {
+      "url": "/",
+      "description": "Current Server (Auto Detect)"
+    },
+    {
+      "url": "https://be-tunjungsekar.vercel.app",
+      "description": "Production Server (Vercel)"
+    },
+    {
       "url": "http://localhost:3000",
-      "description": "Development Server"
+      "description": "Local Development Server"
     }
   ],
   "components": {
