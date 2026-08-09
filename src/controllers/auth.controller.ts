@@ -17,7 +17,7 @@ export const login = async (req: Request, res: Response) => {
   const token = jwt.sign(
     { userId: user.id },
     process.env.JWT_SECRET || 'secret',
-    { expiresIn: (process.env.JWT_EXPIRES_IN || '1d') as any }
+    { expiresIn: process.env.JWT_EXPIRES_IN || '1d' } as jwt.SignOptions
   );
 
   const userWithoutPassword = {
@@ -35,7 +35,7 @@ export const login = async (req: Request, res: Response) => {
 };
 
 export const me = async (req: Request, res: Response) => {
-  const userId = (req as any).user?.userId;
+  const userId = (req as Request & { user?: { userId: number } }).user?.userId;
   if (!userId) throw new AppError('Unauthorized', 401);
 
   const user = await prisma.user.findUnique({

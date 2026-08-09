@@ -3,12 +3,13 @@ import express, { Request, Response } from 'express';
 import cors from 'cors';
 import swaggerUi from 'swagger-ui-express';
 import { readFileSync } from 'fs';
+import path from 'path';
 import { errorHandler } from './middlewares/error.middleware';
 import { authLimiter, apiLimiter } from './middlewares/rate-limit.middleware';
 import { httpCache } from './middlewares/cache.middleware';
 
 const openapiSpec = JSON.parse(
-  readFileSync(new URL('./docs/openapi.json', import.meta.url), 'utf-8')
+  readFileSync(path.join(__dirname, 'docs', 'openapi.json'), 'utf-8')
 );
 
 // Routes
