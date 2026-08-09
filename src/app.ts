@@ -42,13 +42,31 @@ app.use((req, res, next) => {
 });
 app.use(express.json());
 
-// Health check
+// Welcome & Health check
+app.get('/', (_req: Request, res: Response) => {
+  res.json({
+    success: true,
+    message: 'Selamat datang di API Web Profil RW 01 Kelurahan Tunjungsekar',
+    docs: '/docs',
+    health: '/health',
+    version: '1.0.0',
+  });
+});
+
 app.get('/health', (_req: Request, res: Response) => {
   res.json({ success: true, message: 'OK' });
 });
 
-// Swagger UI Documentation
-app.use('/docs', swaggerUi.serve, swaggerUi.setup(openapiSpec));
+// Swagger UI Documentation (using Cloudflare CDN assets to relieve server load & fix Vercel serverless rendering)
+const swaggerOptions = {
+  customCssUrl: 'https://cdnjs.cloudflare.com/ajax/libs/swagger-ui/5.11.8/swagger-ui.min.css',
+  customJs: [
+    'https://cdnjs.cloudflare.com/ajax/libs/swagger-ui/5.11.8/swagger-ui-bundle.min.js',
+    'https://cdnjs.cloudflare.com/ajax/libs/swagger-ui/5.11.8/swagger-ui-standalone-preset.min.js',
+  ],
+};
+
+app.use('/docs', swaggerUi.serve, swaggerUi.setup(openapiSpec, swaggerOptions));
 
 // Base API Path
 const API_BASE = '/api/v1';
