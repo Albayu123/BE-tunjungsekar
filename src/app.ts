@@ -8,9 +8,8 @@ import { errorHandler } from './middlewares/error.middleware';
 import { authLimiter, apiLimiter } from './middlewares/rate-limit.middleware';
 import { httpCache } from './middlewares/cache.middleware';
 
-const openapiSpec = JSON.parse(
-  readFileSync(path.join(__dirname, 'docs', 'openapi.json'), 'utf-8')
-);
+const openapiSpecPath = path.join(process.cwd(), 'src', 'docs', 'openapi.json');
+const openapiSpec = JSON.parse(readFileSync(openapiSpecPath, 'utf-8'));
 
 // Routes
 import authRouter from './routes/auth.routes';
