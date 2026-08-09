@@ -4,7 +4,7 @@ import { AppError } from '../lib/app-error';
 
 export const getMembers = async (req: Request, res: Response) => {
   const members = await prisma.organizationMember.findMany({
-    orderBy: { order: 'asc' }
+    orderBy: { orderIndex: 'asc' }
   });
   res.json({ success: true, data: members });
 };
@@ -19,7 +19,7 @@ export const createMember = async (req: Request, res: Response) => {
 };
 
 export const updateMember = async (req: Request, res: Response) => {
-  const id = parseInt(req.params.id, 10);
+  const id = parseInt(req.params.id as string, 10);
   if (isNaN(id)) throw new AppError('Invalid ID', 400);
 
   const existing = await prisma.organizationMember.findUnique({ where: { id } });
@@ -33,7 +33,7 @@ export const updateMember = async (req: Request, res: Response) => {
 };
 
 export const deleteMember = async (req: Request, res: Response) => {
-  const id = parseInt(req.params.id, 10);
+  const id = parseInt(req.params.id as string, 10);
   if (isNaN(id)) throw new AppError('Invalid ID', 400);
 
   const existing = await prisma.organizationMember.findUnique({ where: { id } });

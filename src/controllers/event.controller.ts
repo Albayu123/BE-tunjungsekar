@@ -7,7 +7,7 @@ export const getEvents = async (req: Request, res: Response) => {
   const limit = parseInt(req.query.limit as string) || 10;
   const status = req.query.status as string;
 
-  const where = status ? { status } : {};
+  const where: any = status ? { status } : {};
   const total = await prisma.event.count({ where });
   const events = await prisma.event.findMany({
     where,
@@ -29,7 +29,7 @@ export const getEvents = async (req: Request, res: Response) => {
 };
 
 export const getEventById = async (req: Request, res: Response) => {
-  const id = parseInt(req.params.id, 10);
+  const id = parseInt(req.params.id as string, 10);
   if (isNaN(id)) throw new AppError('Invalid ID', 400);
 
   const event = await prisma.event.findUnique({ where: { id } });
@@ -50,7 +50,7 @@ export const createEvent = async (req: Request, res: Response) => {
       title,
       startDate: new Date(startDate),
       ...rest,
-      organizerId: req.user.userId
+      organizerId: (req as any).user.userId
     }
   });
 
@@ -62,7 +62,7 @@ export const createEvent = async (req: Request, res: Response) => {
 };
 
 export const updateEvent = async (req: Request, res: Response) => {
-  const id = parseInt(req.params.id, 10);
+  const id = parseInt(req.params.id as string, 10);
   if (isNaN(id)) throw new AppError('Invalid ID', 400);
 
   const existing = await prisma.event.findUnique({ where: { id } });
@@ -85,7 +85,7 @@ export const updateEvent = async (req: Request, res: Response) => {
 };
 
 export const deleteEvent = async (req: Request, res: Response) => {
-  const id = parseInt(req.params.id, 10);
+  const id = parseInt(req.params.id as string, 10);
   if (isNaN(id)) throw new AppError('Invalid ID', 400);
 
   const existing = await prisma.event.findUnique({ where: { id } });

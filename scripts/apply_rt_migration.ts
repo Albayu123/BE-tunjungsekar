@@ -1,4 +1,4 @@
-import { prisma } from '../src/lib/db.ts';
+import { prisma } from '../src/lib/db';
 
 // ponytail: Run DDL via Prisma $executeRawUnsafe using the pooler connection
 async function runMigration() {
