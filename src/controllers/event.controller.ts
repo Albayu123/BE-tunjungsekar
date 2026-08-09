@@ -7,7 +7,7 @@ export const getEvents = async (req: Request, res: Response) => {
   const limit = parseInt(req.query.limit as string) || 10;
   const status = req.query.status as string;
 
-  const where: any = status ? { status } : {};
+  const where: Record<string, unknown> = status ? { status } : {};
   const total = await prisma.event.count({ where });
   const events = await prisma.event.findMany({
     where,
@@ -50,7 +50,7 @@ export const createEvent = async (req: Request, res: Response) => {
       title,
       startDate: new Date(startDate),
       ...rest,
-      organizerId: (req as any).user.userId
+      organizerId: (req as Request & { user?: { userId: number } }).user?.userId || 1
     }
   });
 

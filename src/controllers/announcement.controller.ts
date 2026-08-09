@@ -7,7 +7,7 @@ export const getAnnouncements = async (req: Request, res: Response) => {
   const limit = parseInt(req.query.limit as string) || 10;
   const category = req.query.category as string;
 
-  const where: any = category ? { category } : {};
+  const where: Record<string, unknown> = category ? { category } : {};
   const total = await prisma.announcement.count({ where });
   const announcements = await prisma.announcement.findMany({
     where,
@@ -53,7 +53,7 @@ export const createAnnouncement = async (req: Request, res: Response) => {
       content,
       category,
       slug,
-      createdBy: (req as any).user.userId
+      createdBy: (req as Request & { user?: { userId: number } }).user?.userId || 1
     }
   });
 
