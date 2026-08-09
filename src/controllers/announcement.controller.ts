@@ -7,7 +7,7 @@ export const getAnnouncements = async (req: Request, res: Response) => {
   const limit = parseInt(req.query.limit as string) || 10;
   const category = req.query.category as string;
 
-  const where = category ? { category } : {};
+  const where: any = category ? { category } : {};
   const total = await prisma.announcement.count({ where });
   const announcements = await prisma.announcement.findMany({
     where,
@@ -30,7 +30,7 @@ export const getAnnouncements = async (req: Request, res: Response) => {
 
 export const getAnnouncementBySlug = async (req: Request, res: Response) => {
   const announcement = await prisma.announcement.findUnique({
-    where: { slug: req.params.slug }
+    where: { slug: req.params.slug as string }
   });
 
   if (!announcement) throw new AppError('Announcement not found', 404);
@@ -53,7 +53,7 @@ export const createAnnouncement = async (req: Request, res: Response) => {
       content,
       category,
       slug,
-      authorId: req.user.userId
+      createdBy: (req as any).user.userId
     }
   });
 
@@ -65,7 +65,7 @@ export const createAnnouncement = async (req: Request, res: Response) => {
 };
 
 export const updateAnnouncement = async (req: Request, res: Response) => {
-  const id = parseInt(req.params.id, 10);
+  const id = parseInt(req.params.id as string, 10);
   if (isNaN(id)) throw new AppError('Invalid ID', 400);
 
   const existing = await prisma.announcement.findUnique({ where: { id } });
@@ -90,7 +90,7 @@ export const updateAnnouncement = async (req: Request, res: Response) => {
 };
 
 export const deleteAnnouncement = async (req: Request, res: Response) => {
-  const id = parseInt(req.params.id, 10);
+  const id = parseInt(req.params.id as string, 10);
   if (isNaN(id)) throw new AppError('Invalid ID', 400);
 
   const existing = await prisma.announcement.findUnique({ where: { id } });

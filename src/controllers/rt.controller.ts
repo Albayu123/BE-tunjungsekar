@@ -12,7 +12,7 @@ export const getRts = async (req: Request, res: Response) => {
 };
 
 export const getRtById = async (req: Request, res: Response) => {
-  const id = parseInt(req.params.id);
+  const id = parseInt(req.params.id as string, 10);
   const rt = await prisma.rt.findUnique({ where: { id } });
   if (!rt) throw new AppError('RT tidak ditemukan', 404);
   res.json({ success: true, data: rt });
@@ -28,7 +28,7 @@ export const createRt = async (req: Request, res: Response) => {
 };
 
 export const updateRt = async (req: Request, res: Response) => {
-  const id = parseInt(req.params.id);
+  const id = parseInt(req.params.id as string, 10);
   const { number, leaderName, description, achievements, isFeatured } = req.body;
   const rt = await prisma.rt.update({
     where: { id },
@@ -38,7 +38,7 @@ export const updateRt = async (req: Request, res: Response) => {
 };
 
 export const deleteRt = async (req: Request, res: Response) => {
-  const id = parseInt(req.params.id);
+  const id = parseInt(req.params.id as string, 10);
   await prisma.rt.delete({ where: { id } })
     .catch(() => { throw new AppError('RT tidak ditemukan', 404); });
   res.json({ success: true, message: 'Data RT berhasil dihapus' });

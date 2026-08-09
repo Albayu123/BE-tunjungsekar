@@ -59,7 +59,7 @@ export const uploadPhoto = async (req: Request, res: Response) => {
 
   const data = await prisma.gallery.create({
     data: {
-      url: publicUrlData.publicUrl,
+      imageUrl: publicUrlData.publicUrl,
       caption,
       eventId: parsedEventId
     }
@@ -73,14 +73,14 @@ export const uploadPhoto = async (req: Request, res: Response) => {
 };
 
 export const deletePhoto = async (req: Request, res: Response) => {
-  const id = parseInt(req.params.id);
+  const id = parseInt(req.params.id as string, 10);
   if (isNaN(id)) throw new AppError('ID tidak valid', 400);
 
   const existing = await prisma.gallery.findUnique({ where: { id } });
   if (!existing) throw new AppError('Photo not found', 404);
 
   // Extract filename from URL (ponytail: simplest extraction, assumes standard Supabase URL format)
-  const urlParts = existing.url.split('/');
+  const urlParts = existing.imageUrl.split('/');
   const fileName = urlParts.slice(urlParts.indexOf('gallery') + 1).join('/');
 
   if (fileName) {
