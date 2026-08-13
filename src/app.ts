@@ -26,16 +26,20 @@ const allowedOrigins = process.env.FRONTEND_URL
   ? process.env.FRONTEND_URL.split(',').map((origin) => origin.trim())
   : ['http://localhost:5173'];
 
-app.use(cors({
-  origin: (origin, callback) => {
-    if (!origin || allowedOrigins.includes(origin)) {
-      callback(null, true);
-    } else {
-      callback(new Error('Blocked by CORS policy'));
-    }
-  },
-  credentials: true,
-}));
+app.use((req, res, next) => {
+  cors({
+    origin: (origin, callback) => {
+      // ponytail: allow self-origin (same-origin POST requests from e.g. Swagger UI send an Origin header)
+      const isSelf = origin ? new URL(origin).host === req.get('host') : false;
+      if (!origin || isSelf || allowedOrigins.includes(origin)) {
+        callback(null, true);
+      } else {
+        callback(new Error('Blocked by CORS policy'));
+      }
+    },
+    credentials: true,
+  })(req, res, next);
+});
 app.use((req, res, next) => {
   console.log(`${req.method} ${req.path}`);
   next();
