@@ -2,11 +2,11 @@
   "name": "be-desa",
   "version": "1.0.0",
   "description": "Backend API untuk Web Profil RW 01 Kelurahan Tunjungsekar — Proyek KKN",
-  "main": "src/app.js",
+  "main": "dist/src/app.js",
   "scripts": {
     "dev": "tsx watch src/server.ts",
     "build": "prisma generate && tsc",
-    "start": "node dist/app.js",
+    "start": "node dist/src/app.js",
     "test": "vitest run",
     "lint": "eslint src/ scripts/ tests/",
     "seed:dummy": "tsx scripts/seed_dummy.ts"

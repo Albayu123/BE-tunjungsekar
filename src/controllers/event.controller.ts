@@ -50,7 +50,7 @@ export const createEvent = async (req: Request, res: Response) => {
       title,
       startDate: new Date(startDate),
       ...rest,
-      organizerId: (req as Request & { user?: { userId: number } }).user?.userId || 1
+      createdBy: (req as Request & { user?: { userId: number } }).user?.userId || 1
     }
   });
 

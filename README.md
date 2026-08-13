@@ -6,7 +6,7 @@ Backend REST API resmi untuk **Web Profil Kampung Mbois RW 01 Kelurahan Tunjungs
 
 ## 🚀 Tech Stack
 
-- **Runtime & Language**: Node.js (TypeScript ESM / NodeNext)
+- **Runtime & Language**: Node.js (TypeScript, CommonJS)
 - **Framework**: Express.js (Express v5 dengan *Native Async Error Handling*)
 - **Database**: PostgreSQL via Supabase
 - **ORM**: Prisma v7 (dengan `prisma.config.ts` & Prisma Client)
@@ -62,7 +62,7 @@ Backend REST API resmi untuk **Web Profil Kampung Mbois RW 01 Kelurahan Tunjungs
 - `DELETE /api/v1/admin/events/:id` — Hapus agenda (*membutuhkan JWT*)
 
 ### 8. Galeri Foto Dokumentasi (`/gallery`)
-- `GET /api/v1/gallery` — Daftar foto (support pagination `?page=&limit=` & filter `?eventId=`)
+- `GET /api/v1/gallery` — Daftar foto (support pagination `?page=&limit=` & filter `?event_id=`)
 - `POST /api/v1/admin/gallery` — Upload foto ke Supabase Storage & simpan URL (*multipart/form-data*, *membutuhkan JWT*)
 - `DELETE /api/v1/admin/gallery/:id` — Hapus foto dari database & Supabase (*membutuhkan JWT*)
 
@@ -96,9 +96,10 @@ PORT=3000
 DATABASE_URL="postgresql://postgres.<project-ref>:<password>@aws-0-ap-southeast-2.pooler.supabase.com:6543/postgres?pgbouncer=true"
 DIRECT_URL="postgresql://postgres.<project-ref>:<password>@db.<project-ref>.supabase.co:5432/postgres"
 JWT_SECRET="rahasia_jwt_super_aman"
-JWT_EXPIRES_IN="1d"
+JWT_EXPIRES_IN="7d"
 SUPABASE_URL="https://<project-ref>.supabase.co"
 SUPABASE_ANON_KEY="your-supabase-anon-key"
+FRONTEND_URL="http://localhost:5173"
 ```
 
 ### 3. Generate Prisma Client
@@ -135,19 +136,22 @@ npm run lint
 
 ```
 BE-desa/
+├── api/                # Vercel Serverless handler (api/index.ts)
 ├── src/
 │   ├── controllers/    # Handler logika & Prisma query langsung
 │   ├── docs/           # Specifications (openapi.json)
 │   ├── lib/            # Singleton Prisma (db.ts), Supabase (supabase.ts), AppError
 │   ├── middlewares/    # Auth JWT & Error Handler
 │   ├── routes/         # Definisi rute per resource
-│   └── app.ts          # Aplikasi Express utama
+│   ├── app.ts          # Aplikasi Express utama
+│   ├── server.ts       # Entry point dev/production
+│   └── cluster.ts      # Cluster mode (opsional)
 ├── prisma/
 │   ├── migrations/     # File histori SQL migration
 │   └── schema.prisma   # Schema Prisma v7
 ├── scripts/            # Script seeder data resmi
 ├── tests/              # Vitest test suite
-├── docs/               # Dokumentasi pendukung (SOP, AGENTS, SPEC)
+├── doc-project/        # Dokumentasi pendukung (SOP, AGENTS, SPEC)
 └── prisma.config.ts    # Prisma v7 Root Config
 ```
 

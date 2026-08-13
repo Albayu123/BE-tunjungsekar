@@ -1,4 +1,5 @@
 import { Request, Response } from 'express';
+import { Prisma } from '@prisma/client';
 import { prisma } from '../lib/db';
 import { AppError } from '../lib/app-error';
 
@@ -13,6 +14,7 @@ export const getRts = async (req: Request, res: Response) => {
 
 export const getRtById = async (req: Request, res: Response) => {
   const id = parseInt(req.params.id as string, 10);
+  if (isNaN(id)) throw new AppError('ID tidak valid', 400);
   const rt = await prisma.rt.findUnique({ where: { id } });
   if (!rt) throw new AppError('RT tidak ditemukan', 404);
   res.json({ success: true, data: rt });
@@ -33,13 +35,23 @@ export const updateRt = async (req: Request, res: Response) => {
   const rt = await prisma.rt.update({
     where: { id },
     data: { ...(number && { number: parseInt(number) }), leaderName, description, achievements, isFeatured },
-  }).catch(() => { throw new AppError('RT tidak ditemukan', 404); });
+  }).catch((err) => {
+    if (err instanceof Prisma.PrismaClientKnownRequestError && err.code === 'P2025') {
+      throw new AppError('RT tidak ditemukan', 404);
+    }
+    throw err;
+  });
   res.json({ success: true, data: rt, message: 'Data RT berhasil diperbarui' });
 };
 
 export const deleteRt = async (req: Request, res: Response) => {
   const id = parseInt(req.params.id as string, 10);
   await prisma.rt.delete({ where: { id } })
-    .catch(() => { throw new AppError('RT tidak ditemukan', 404); });
+    .catch((err) => {
+      if (err instanceof Prisma.PrismaClientKnownRequestError && err.code === 'P2025') {
+        throw new AppError('RT tidak ditemukan', 404);
+      }
+      throw err;
+    });
   res.json({ success: true, message: 'Data RT berhasil dihapus' });
 };

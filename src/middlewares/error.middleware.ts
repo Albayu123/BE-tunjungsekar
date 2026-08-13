@@ -5,7 +5,6 @@ import { Prisma } from '@prisma/client';
 export const errorHandler = (err: unknown, req: Request, res: Response, _next: NextFunction) => {
   let statusCode = 500;
   let message = 'Internal Server Error';
-  let errors;
 
   if (err instanceof AppError) {
     statusCode = err.statusCode;
@@ -14,6 +13,9 @@ export const errorHandler = (err: unknown, req: Request, res: Response, _next: N
     if (err.code === 'P2025') {
       statusCode = 404;
       message = 'Resource not found';
+    } else if (err.code === 'P2002') {
+      statusCode = 409;
+      message = 'Data sudah ada (duplikat)';
     }
   } else if (err instanceof Error) {
     message = err.message;
@@ -22,7 +24,6 @@ export const errorHandler = (err: unknown, req: Request, res: Response, _next: N
   res.status(statusCode).json({
     success: false,
     message,
-    errors,
     ...(process.env.NODE_ENV !== 'production' && err instanceof Error && { stack: err.stack })
   });
 };
