@@ -6,6 +6,9 @@ export const getAnnouncements = async (req: Request, res: Response) => {
   const page = parseInt(req.query.page as string) || 1;
   const limit = parseInt(req.query.limit as string) || 10;
   const category = req.query.category as string;
+  if (category && !['berita', 'pengumuman'].includes(category)) {
+    throw new AppError('Kategori tidak valid. Gunakan berita atau pengumuman', 400);
+  }
 
   const where: Record<string, unknown> = category ? { category } : {};
   const total = await prisma.announcement.count({ where });
