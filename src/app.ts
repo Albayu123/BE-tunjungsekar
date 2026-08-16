@@ -19,6 +19,7 @@ import { publicAnnouncementRouter, adminAnnouncementRouter } from './routes/anno
 import { publicEventRouter, adminEventRouter } from './routes/event.routes';
 import { publicGalleryRouter, adminGalleryRouter } from './routes/gallery.routes';
 import { publicRtRouter, adminRtRouter } from './routes/rt.routes';
+import { publicStatistikRouter, adminStatistikRouter } from './routes/statistik.routes';
 
 const app = express();
 
@@ -107,6 +108,10 @@ app.use(`${API_BASE}/admin/gallery`, adminGalleryRouter);
 // RT
 app.use(`${API_BASE}/rts`, publicRtRouter);
 app.use(`${API_BASE}/admin/rts`, adminRtRouter);
+
+// Statistik RW
+app.use(`${API_BASE}/statistik`, publicStatistikRouter);
+app.use(`${API_BASE}/admin/statistik`, adminStatistikRouter);
 
 // 404 Handler
 app.use((_req: Request, res: Response) => {
