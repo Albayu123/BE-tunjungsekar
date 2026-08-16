@@ -34,34 +34,38 @@ Backend REST API resmi untuk **Web Profil Kampung Mbois RW 01 Kelurahan Tunjungs
 - `GET /api/v1/profile` — Ambil data profil RW (Sejarah, Visi, Misi, Alamat, Kontak)
 - `PUT /api/v1/admin/profile` — Update profil RW (*membutuhkan JWT*)
 
-### 4. Pengurus RW / Bagian Organisasi (`/organization-members`)
+### 4. Statistik RW (`/statistik`)
+- `GET /api/v1/statistik` — Ambil data statistik RW (jumlah penduduk, jumlah RT, jumlah RW)
+- `PUT /api/v1/admin/statistik` — Update statistik RW (*membutuhkan JWT*)
+
+### 5. Pengurus RW / Bagian Organisasi (`/organization-members`)
 - `GET /api/v1/organization-members` — Daftar pengurus terurut (`orderIndex`)
 - `POST /api/v1/admin/organization-members` — Tambah pengurus (*membutuhkan JWT*)
 - `PUT /api/v1/admin/organization-members/:id` — Update pengurus (*membutuhkan JWT*)
 - `DELETE /api/v1/admin/organization-members/:id` — Hapus pengurus (*membutuhkan JWT*)
 
-### 5. Data 11 RT & Prestasi (`/rts`)
+### 6. Data 11 RT & Prestasi (`/rts`)
 - `GET /api/v1/rts` — Daftar 11 RT (support filter `?is_featured=true`)
 - `GET /api/v1/rts/:id` — Detail RT berdasarkan ID
 - `POST /api/v1/admin/rts` — Tambah data RT (*membutuhkan JWT*)
 - `PUT /api/v1/admin/rts/:id` — Update data/prestasi RT (*membutuhkan JWT*)
 - `DELETE /api/v1/admin/rts/:id` — Hapus data RT (*membutuhkan JWT*)
 
-### 6. Berita & Pengumuman (`/announcements`)
+### 7. Berita & Pengumuman (`/announcements`)
 - `GET /api/v1/announcements` — Daftar berita/pengumuman (support pagination `?page=&limit=` & filter `?category=berita|pengumuman`)
 - `GET /api/v1/announcements/:slug` — Detail berita berdasarkan slug
 - `POST /api/v1/admin/announcements` — Buat berita/pengumuman (*membutuhkan JWT*)
 - `PUT /api/v1/admin/announcements/:id` — Update berita (*membutuhkan JWT*)
 - `DELETE /api/v1/admin/announcements/:id` — Hapus berita (*membutuhkan JWT*)
 
-### 7. Agenda Kegiatan (`/events`)
+### 8. Agenda Kegiatan (`/events`)
 - `GET /api/v1/events` — Daftar kegiatan (support pagination `?page=&limit=` & filter `?status=upcoming|ongoing|done`)
 - `GET /api/v1/events/:id` — Detail kegiatan
 - `POST /api/v1/admin/events` — Buat agenda baru (*membutuhkan JWT*)
 - `PUT /api/v1/admin/events/:id` — Update agenda (*membutuhkan JWT*)
 - `DELETE /api/v1/admin/events/:id` — Hapus agenda (*membutuhkan JWT*)
 
-### 8. Galeri Foto Dokumentasi (`/gallery`)
+### 9. Galeri Foto Dokumentasi (`/gallery`)
 - `GET /api/v1/gallery` — Daftar foto (support pagination `?page=&limit=` & filter `?event_id=`)
 - `POST /api/v1/admin/gallery` — Upload foto ke Supabase Storage & simpan URL (*multipart/form-data*, *membutuhkan JWT*)
 - `DELETE /api/v1/admin/gallery/:id` — Hapus foto dari database & Supabase (*membutuhkan JWT*)
