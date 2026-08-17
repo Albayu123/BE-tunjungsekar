@@ -312,6 +312,38 @@
         "responses": { "200": { "description": "Foto berhasil dihapus" } }
       }
     },
+    "/api/v1/statistik": {
+      "get": {
+        "summary": "Statistik RW 01 (Public)",
+        "responses": {
+          "200": { "description": "Jumlah penduduk, RT, dan RW" }
+        }
+      }
+    },
+    "/api/v1/admin/statistik": {
+      "put": {
+        "summary": "Update Statistik RW 01 (Admin)",
+        "security": [{ "bearerAuth": [] }],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "jumlahPenduduk": { "type": "integer", "example": 2422 },
+                  "jumlahRt": { "type": "integer", "example": 11 },
+                  "jumlahRw": { "type": "integer", "example": 1 }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": { "description": "Statistik berhasil diperbarui" }
+        }
+      }
+    },
     "/api/v1/rts": {
       "get": {
         "summary": "Daftar 11 RT (Public)",

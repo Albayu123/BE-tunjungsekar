@@ -90,6 +90,16 @@ model Gallery {
   @@map("gallery")
 }
 
+model Statistic {
+  id             Int      @id @default(autoincrement())
+  jumlahPenduduk Int
+  jumlahRt       Int
+  jumlahRw       Int
+  updatedAt      DateTime @updatedAt
+
+  @@map("statistics")
+}
+
 model Rt {
   id           Int      @id @default(autoincrement())
   number       Int      @unique
